@@ -13,3 +13,5 @@ Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS over H
 * install the required libraries by running `npm install` in the project directory
 * modify `data/sources.json`
 * run the program using `nodejs node-ffmpeg-mpegts-proxy.js`. Run the command without any parameters to see what's available.
+
+Once the proxy is running, streams are available on the e.g. `http://localhost:9128/channel1`, assuming port 9128 is used and a source with the URL `/channel1` exists.
