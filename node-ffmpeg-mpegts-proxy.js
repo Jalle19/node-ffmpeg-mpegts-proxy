@@ -2,9 +2,10 @@
  * Read command line options
  */
 var argv = require('yargs')
-		.usage('Usage: $0 -p <port> [-a <avconv>]')
+		.usage('Usage: $0 -p <port> [-a <avconv>] [-q]')
 		.alias('p', 'port')
 		.alias('a', 'avconv')
+		.alias('q', 'quiet')
 		.demand(['p'])
 		.default('a', 'avconv')
 		.describe('p', 'The port the HTTP server should be listening on')
@@ -16,11 +17,16 @@ var argv = require('yargs')
  */
 var winston = require('winston');
 winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console, {
-	timestamp: true,
-	colorize: true,
-	level: 'debug'
-});
+
+// Enable console logging unless the --quiet switch was passed
+if (!argv.quiet)
+{
+	winston.add(winston.transports.Console, {
+		timestamp: true,
+		colorize: true,
+		level: 'debug'
+	});
+}
 
 /*
  * Include other libraries
