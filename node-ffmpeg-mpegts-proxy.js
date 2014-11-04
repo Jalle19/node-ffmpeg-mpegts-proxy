@@ -11,14 +11,17 @@ var fs = require('fs');
  * Read command line options
  */
 var argv = yargs
-		.usage('Usage: $0 -p <port> [-a <avconv>] [-q]')
+		.usage('Usage: $0 -p <port> [-a <avconv>] [-q] [-s <sources>]')
 		.alias('p', 'port')
 		.alias('a', 'avconv')
+		.alias('s', 'sources')
 		.alias('q', 'quiet')
 		.demand(['p'])
 		.default('a', 'avconv')
+		.default('s', 'data/sources.json')
 		.describe('p', 'The port the HTTP server should be listening on')
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
+		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
 		.argv;
 
 /*
@@ -39,7 +42,7 @@ if (!argv.quiet)
 /*
  * Read the source definitions
  */
-var sources = JSON.parse(fs.readFileSync('data/sources.json', 'utf8'));
+var sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
 winston.debug('Loaded ' + sources.length + ' sources');
 
 /**
