@@ -1,0 +1,17 @@
+[
+	{
+		"name": "Channel One",
+		"url": "/channel1",
+		"source": "http://example.com/channel1"
+	},
+	{
+		"name": "Channel Two",
+		"url": "/channel2",
+		"source": "http://example.com/channel1"
+	},
+	{
+		"name": "Channel Three",
+		"url": "/channel3",
+		"source": "http://example.com/channel1"
+	}
+]
