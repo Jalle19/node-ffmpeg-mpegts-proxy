@@ -1,7 +1,16 @@
 /*
+ * Require libraries
+ */
+var yargs = require('yargs');
+var winston = require('winston');
+var http = require("http");
+var spawn = require('child_process').spawn;
+var fs = require('fs');
+
+/*
  * Read command line options
  */
-var argv = require('yargs')
+var argv = yargs
 		.usage('Usage: $0 -p <port> [-a <avconv>] [-q]')
 		.alias('p', 'port')
 		.alias('a', 'avconv')
@@ -15,7 +24,6 @@ var argv = require('yargs')
 /*
  * Configure logger
  */
-var winston = require('winston');
 winston.remove(winston.transports.Console);
 
 // Enable console logging unless the --quiet switch was passed
@@ -27,13 +35,6 @@ if (!argv.quiet)
 		level: 'debug'
 	});
 }
-
-/*
- * Include other libraries
- */
-var http = require("http");
-var spawn = require('child_process').spawn;
-var fs = require('fs');
 
 /*
  * Read the source definitions
