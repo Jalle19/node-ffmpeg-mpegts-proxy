@@ -82,6 +82,7 @@ var server = http.createServer(function (request, response) {
 		'-i', source.source,
 		'-vcodec', 'copy',
 		'-acodec', 'copy',
+		'-metadata', 'service_provider=' + source.provider,
 		'-metadata', 'service_name=' + source.name,
 		'-f', 'mpegts',
 		'-' // Use stdout as output

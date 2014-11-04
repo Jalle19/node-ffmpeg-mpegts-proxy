@@ -1,16 +1,19 @@
 [
 	{
 		"name": "Channel One",
+		"provider": "Provider One",
 		"url": "/channel1",
 		"source": "http://example.com/channel1"
 	},
 	{
 		"name": "Channel Two",
+		"provider": "Provider Two",
 		"url": "/channel2",
 		"source": "http://example.com/channel1"
 	},
 	{
 		"name": "Channel Three",
+		"provider": "Provider Three",
 		"url": "/channel3",
 		"source": "http://example.com/channel1"
 	}
