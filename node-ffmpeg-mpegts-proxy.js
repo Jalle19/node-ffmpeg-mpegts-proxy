@@ -39,6 +39,7 @@ var fs = require('fs');
  * Read the source definitions
  */
 var sources = JSON.parse(fs.readFileSync('data/sources.json', 'utf8'));
+winston.debug('Loaded ' + sources.length + ' sources');
 
 /**
  * The main HTTP server process
