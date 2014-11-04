@@ -96,7 +96,20 @@ var server = http.createServer(function (request, response) {
 		response.write(chunk);
 	});
 
-	// Kill avconv when client closes the connection
+    avconv.stderr.on('data', function (chunk) {
+        winston.silly("stderr: " + chunk);
+    });
+
+    // Close the connection when avconv dies
+    avconv.on('close', function (code) {
+        if(code != 0) {
+            winston.error('avconv exited with code ' + code);
+            response.write("avconv quit unexpectedly\n");
+        }
+        response.end();
+    });
+
+    // Kill avconv when client closes the connection
 	request.on('close', function () {
 		winston.info('Client disconnected, stopping avconv');
 		avconv.kill();
