@@ -95,8 +95,11 @@ var server = http.createServer(function (request, response) {
 	// Relay video output to the client
 	avconv.stdout.pipe(response);
 
+	// avconv exits with code 255 when closed because the client closes the 
+	// connection, if it closes in any other way we need to know about it
 	avconv.on('exit', function(code) {
-		winston.error('avconv died with code ' + code);
+		if (code !== 255)
+			winston.error('avconv exited with code ' + code);
 	});
 
 	// Kill avconv when client closes the connection
