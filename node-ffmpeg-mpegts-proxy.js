@@ -93,8 +93,10 @@ var server = http.createServer(function (request, response) {
 	var avconv = spawn(argv.avconv, avconvOptions);
 
 	// Relay video output to the client
-	avconv.stdout.on('data', function (chunk) {
-		response.write(chunk);
+	avconv.stdout.pipe(response);
+
+	avconv.on('exit', function(code) {
+		winston.error('avconv died with code ' + code);
 	});
 
 	// Kill avconv when client closes the connection
