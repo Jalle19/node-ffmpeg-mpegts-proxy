@@ -6,9 +6,10 @@ Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS over H
 ## Requirements
 
 * nodejs
+* avconv
 
 ## Usage
 
 * install the required libraries by running `npm install` in the project directory
 * modify `data/sources.json`
-* run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
+* run the program using `nodejs node-ffmpeg-mpegts-proxy.js`. Run the command without any parameters to see what's available.
