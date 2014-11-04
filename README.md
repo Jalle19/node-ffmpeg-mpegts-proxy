@@ -15,3 +15,10 @@ Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS over H
 * run the program using `nodejs node-ffmpeg-mpegts-proxy.js`. Run the command without any parameters to see what's available.
 
 Once the proxy is running, streams are available on the e.g. `http://localhost:9128/channel1`, assuming port 9128 is used and a source with the URL `/channel1` exists.
+
+To turn the proxy into a proper daemon that can be started and stopped like other services, copy the init script from the `debian` folder to `/etc/init.d/` and run the following commands:
+
+```
+sudo chmod +x /etc/init.d/node-ffmpeg-mpegts-proxy
+sudo update-rc.d node-ffmpeg-mpegts-proxy defaults
+```
