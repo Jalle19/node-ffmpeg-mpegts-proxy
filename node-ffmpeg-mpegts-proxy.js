@@ -104,5 +104,5 @@ var server = http.createServer(function (request, response) {
 });
 
 // Start the server
-server.listen(argv.port);
+server.listen(argv.port, '::'); // listen on both IPv4 and IPv6
 winston.info('Server listening on port ' + argv.port);
