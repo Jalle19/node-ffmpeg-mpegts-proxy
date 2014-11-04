@@ -79,6 +79,7 @@ var server = http.createServer(function (request, response) {
 
 	// Define options for the child process
 	var avconvOptions = [
+		'-re',
 		'-i', source.source,
 		'-vcodec', 'copy',
 		'-acodec', 'copy',
