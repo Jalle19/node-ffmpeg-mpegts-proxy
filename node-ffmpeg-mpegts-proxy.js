@@ -93,6 +93,9 @@ var server = http.createServer(function (request, response) {
 		'-' // Use stdout as output
 	];
 	
+	// Indicates whether avconv should be restarted on failure
+	var shouldRestart = true;
+	
 	/**
 	 * Spawns an avconv process and pipes its output to the response input
 	 * @returns {undefined}
@@ -100,24 +103,23 @@ var server = http.createServer(function (request, response) {
 	var startAvconv = function() {
 		avconv = spawn(argv.avconv, avconvOptions);
 		avconv.stdout.pipe(response, {end: false});
+		
+		// Handle avconv exits
+		avconv.on('exit', function (code) {
+			winston.error('avconv exited with code ' + code);
+
+			// Restart the process
+			if (shouldRestart)
+			{
+				winston.info('Client still connected, restarting avconv ...');
+				startAvconv();
+			}
+		});
 	};
 	
 	// Start serving data
 	var avconv;
 	startAvconv();
-	var shouldRestart = true;
-
-	// Handle avconv exits
-	avconv.on('exit', function (code) {
-		winston.error('avconv exited with code ' + code);
-		
-		// Restart the process
-		if (shouldRestart)
-		{
-			winston.info('Client still connected, restarting avconv ...');
-			startAvconv();
-		}
-	});
 
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
