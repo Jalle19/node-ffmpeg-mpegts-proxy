@@ -106,7 +106,7 @@ var server = http.createServer(function (request, response) {
 		avconv.stdout.pipe(response, {end: false});
 		
 		// Handle avconv exits
-		avconv.on('exit', function (code) {
+		avconv.on('close', function (code) {
 			// Restart the process
 			if (shouldRestart)
 			{
