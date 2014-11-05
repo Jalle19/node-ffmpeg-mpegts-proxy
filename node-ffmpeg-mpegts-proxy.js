@@ -92,18 +92,9 @@ var server = http.createServer(function (request, response) {
 		'-f', 'mpegts',
 		'-' // Use stdout as output
 	];
-
-	var avconv = spawn(argv.avconv, avconvOptions);
-
-	// Relay video output to the client
-	avconv.stdout.pipe(response);
-
-	// avconv exits with code 255 when closed because the client closes the 
-	// connection, if it closes in any other way we need to know about it
-	avconv.on('exit', function(code) {
-		if (code !== 255)
-			winston.error('avconv exited with code ' + code);
-	});
+	
+	// Start serving data
+	recursiveSpawn(avconvOptions, response);
 
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
@@ -111,6 +102,39 @@ var server = http.createServer(function (request, response) {
 		avconv.kill();
 	});
 });
+
+/**
+ * Recursively spawns an avconv process with the specified options, then pipes 
+ * its output to the response. If the process dies, it is respawned and piping 
+ * is continued.
+ * @param {type} avconvOptions
+ * @param {type} response
+ * @returns {undefined}
+ */
+var recursiveSpawn = function (avconvOptions, response) {
+	var avconv = spawn(argv.avconv, avconvOptions);
+
+	// Pipe the process output to the response, but don't end it on EOF
+	avconv.stdout.pipe(response, {end: false});
+
+	// Respawn and continue if the process fails
+	avconv.stdout.on('end', function () {
+		recursiveSpawn(avconvOptions, response);
+	});
+
+	// Handle exits
+	avconv.on('exit', function (code) {
+		var error = 'avconv exited with code ' + code;
+
+		if (code === 255)
+			winston.error(error + ', restarting ...');
+		else
+		{
+			winston.error(error + ', aborting ...');
+			return;
+		}
+	});
+};
 
 // Start the server
 server.listen(argv.port, '::'); // listen on both IPv4 and IPv6
