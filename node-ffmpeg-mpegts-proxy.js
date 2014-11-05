@@ -50,7 +50,8 @@ winston.debug('Loaded ' + sources.length + ' sources');
  * @type @exp;http@call;createServer
  */
 var server = http.createServer(function (request, response) {
-	winston.debug('Got request for "' + request.url + '" from ' + request.connection.remoteAddress);
+	var remoteAddress = request.connection.remoteAddress;
+	winston.debug('Got request for "' + request.url + '" from ' + remoteAddress);
 
 	// Determine which source to serve based on the requested URL
 	var source = null;
@@ -106,12 +107,11 @@ var server = http.createServer(function (request, response) {
 		
 		// Handle avconv exits
 		avconv.on('exit', function (code) {
-			winston.error('avconv exited with code ' + code);
-
 			// Restart the process
 			if (shouldRestart)
 			{
-				winston.info('Client still connected, restarting avconv ...');
+				winston.error('avconv exited with code ' + code);
+				winston.info(remoteAddress + ' still connected, restarting avconv ...');
 				startAvconv();
 			}
 		});
@@ -123,7 +123,7 @@ var server = http.createServer(function (request, response) {
 
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
-		winston.info('Client disconnected, stopping avconv');
+		winston.info(remoteAddress + ' disconnected, stopping avconv');
 		
 		shouldRestart = false;
 		avconv.kill();
