@@ -3,6 +3,8 @@ node-ffmpeg-mpegts-proxy
 
 Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS and serve it on demand over HTTP. It has been designed for proxying HLS streams for use as IPTV input in tvheadend. Currently it simply remuxes the source stream into MPEG-TS and adds a service name (for automatic detection in tvheadend); if the source uses codecs other than what is used in standard DVB you can add transcoding to the mix by changing the avconv parameters.
 
+Since HLS input can be a bit unreliable, the converter process will be restarted automatically (without the HTTP response ending) until the client closes the connection (in which case the process is killed).
+
 ## Requirements
 
 * nodejs
@@ -11,14 +13,14 @@ Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS and se
 ## Usage
 
 * install the required libraries by running `npm install` in the project directory
-* modify `data/sources.json`
+* copy `data/sources.json` someplace and modify it
 * run the program using `nodejs node-ffmpeg-mpegts-proxy.js`. Run the command without any parameters to see what's available.
 
 Once the proxy is running, streams are available on the e.g. `http://localhost:9128/channel1`, assuming port 9128 is used and a source with the URL `/channel1` exists.
 
 ### Configuring sources
 
-Sources are read from `data/sources.json`. The "url" attribute determines through which URL the stream is accessible. It has to begin with a forward slash ("/"). The "name" and "provider" values are injected into the stream as the service name and provider. The "source" value can be anything that ffmpeg can use as input.
+Sources are read from `data/sources.json` by default. The location to the source definitions can be changed with the `-s` switch. The `url` attribute determines through which URL the stream is accessible. It has to begin with a forward slash (`/`). The `name` and `provider` values are injected into the stream as the service name and provider. The `source` value can be anything that ffmpeg can use as input.
 
 ### Running as a service
 
