@@ -78,8 +78,7 @@ var server = http.createServer(function (request, response) {
 
 	// Tell the client we're sending MPEG-TS data
 	response.writeHead(200, {
-		'Content-Type': 'video/mp2t',
-		'Transfer-Encoding': 'chunked'
+		'Content-Type': 'video/mp2t'
 	});
 
 	// Define options for the child process
