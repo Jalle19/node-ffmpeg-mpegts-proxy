@@ -23,6 +23,7 @@ var argv = yargs
 		.describe('p', 'The port the HTTP server should be listening on')
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
 		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
+		.describe('q', 'Disable all logging to stdout')
 		.argv;
 
 /*
