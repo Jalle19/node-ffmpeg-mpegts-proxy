@@ -126,8 +126,8 @@ var server = http.createServer(function (request, response) {
 		});
 
 		// Respawn on exit
-		stream.on('exit', function(code, signal) {
-			winston.error('avconv exited with code %d and signal %s', code, signal);
+		stream.on('exit', function(code) {
+			winston.error('avconv exited with code %d', code);
 			
 			if (shouldRestart)
 			{
