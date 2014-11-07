@@ -14,7 +14,18 @@ Since HLS input can be a bit unreliable, the converter process will be restarted
 
 * install the required libraries by running `npm install` in the project directory
 * copy `data/sources.json` someplace and modify it
-* run the program using `nodejs node-ffmpeg-mpegts-proxy.js`. Run the command without any parameters to see what's available.
+* run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
+
+```
+Usage: nodejs ./node-ffmpeg-mpegts-proxy.js -p <port> [-a <avconv>] [-q | -v] [-s <sources>]
+
+Options:
+  -p, --port     The port the HTTP server should be listening on            [required]
+  -a, --avconv   The path to avconv, defaults to just "avconv"              [default: "avconv"]
+  -s, --sources  The path to sources.json, defaults to "data/sources.json"  [default: "data/sources.json"]
+  -q, --quiet    Disable all logging to stdout
+  -v, --verbose  Enable verbose logging (shows the output from avconv)
+```
 
 Once the proxy is running, streams are available on the e.g. `http://localhost:9128/channel1`, assuming port 9128 is used and a source with the URL `/channel1` exists.
 
