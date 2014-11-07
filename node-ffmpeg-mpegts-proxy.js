@@ -12,11 +12,12 @@ var avconv = require('avconv');
  * Read command line options
  */
 var argv = yargs
-		.usage('Usage: $0 -p <port> [-a <avconv>] [-q] [-s <sources>]')
+		.usage('Usage: $0 -p <port> [-a <avconv>] [-q | -v] [-s <sources>]')
 		.alias('p', 'port')
 		.alias('a', 'avconv')
 		.alias('s', 'sources')
 		.alias('q', 'quiet')
+		.alias('v', 'verbose')
 		.demand(['p'])
 		.default('a', 'avconv')
 		.default('s', 'data/sources.json')
@@ -24,6 +25,7 @@ var argv = yargs
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
 		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
 		.describe('q', 'Disable all logging to stdout')
+		.describe('v', 'Enable verbose logging (shows the output from avconv)')
 		.argv;
 
 /*
@@ -31,13 +33,12 @@ var argv = yargs
  */
 winston.remove(winston.transports.Console);
 
-// Enable console logging unless the --quiet switch was passed
 if (!argv.quiet)
 {
 	winston.add(winston.transports.Console, {
 		timestamp: true,
 		colorize: true,
-		level: 'debug'
+		level: argv.verbose ? 'silly' : 'debug'
 	});
 }
 
@@ -115,6 +116,11 @@ var server = http.createServer(function (request, response) {
 		// Kill the process on error
 		stream.on('error', function() {
 			stream.kill();
+		});
+		
+		// Print avconv status messages
+		stream.on('message', function(message) {
+			winston.silly(message);
 		});
 
 		// Respawn on exit
