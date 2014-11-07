@@ -12,15 +12,14 @@ var avconv = require('avconv');
  * Read command line options
  */
 var argv = yargs
-		.usage('Usage: $0 -p <port> [-a <avconv>] [-q | -v] [-s <sources>]')
+		.usage('Usage: $0 -p <port> -s <sources> [-a <avconv>] [-q | -v]')
 		.alias('p', 'port')
 		.alias('a', 'avconv')
 		.alias('s', 'sources')
 		.alias('q', 'quiet')
 		.alias('v', 'verbose')
-		.demand(['p'])
+		.demand(['p', 's'])
 		.default('a', 'avconv')
-		.default('s', 'data/sources.json')
 		.describe('p', 'The port the HTTP server should be listening on')
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
 		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
