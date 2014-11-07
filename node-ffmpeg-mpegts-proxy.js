@@ -45,7 +45,7 @@ if (!argv.quiet)
  * Read the source definitions
  */
 var sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
-winston.debug('Loaded %d sources', sources.length);
+winston.info('Loaded %d sources', sources.length);
 
 /**
  * The main HTTP server process
@@ -69,7 +69,7 @@ var server = http.createServer(function (request, response) {
 
 	if (source === null)
 	{
-		winston.info('Unknown source %s', request.url);
+		winston.error('Unknown source %s', request.url);
 
 		response.writeHead(404, {"Content-Type": "text/plain"});
 		response.write("404 Not Found\n");
