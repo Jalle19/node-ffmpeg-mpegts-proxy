@@ -90,7 +90,7 @@ var server = http.createServer(function (request, response) {
 		'-metadata', 'service_provider=' + source.provider,
 		'-metadata', 'service_name=' + source.name,
 		'-f', 'mpegts',
-		'-' // Use stdout as output
+		'pipe:1' // Use stdout as output
 	];
 	
 	// Indicates whether avconv should be restarted on failure
