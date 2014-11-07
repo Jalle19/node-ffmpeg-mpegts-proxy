@@ -43,7 +43,7 @@ if (!argv.quiet)
  * Read the source definitions
  */
 var sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
-winston.debug('Loaded ' + sources.length + ' sources');
+winston.debug('Loaded %d sources', sources.length);
 
 /**
  * The main HTTP server process
@@ -51,7 +51,7 @@ winston.debug('Loaded ' + sources.length + ' sources');
  */
 var server = http.createServer(function (request, response) {
 	var remoteAddress = request.connection.remoteAddress;
-	winston.debug('Got request for "' + request.url + '" from ' + remoteAddress);
+	winston.debug('Got request for %s from %s', request.url, remoteAddress);
 
 	// Determine which source to serve based on the requested URL
 	var source = null;
@@ -67,7 +67,7 @@ var server = http.createServer(function (request, response) {
 
 	if (source === null)
 	{
-		winston.info('Unknown source "' + request.url + '" requested');
+		winston.info('Unknown source %s', requested);
 
 		response.writeHead(404, {"Content-Type": "text/plain"});
 		response.write("404 Not Found\n");
@@ -132,4 +132,4 @@ var server = http.createServer(function (request, response) {
 
 // Start the server
 server.listen(argv.port, '::'); // listen on both IPv4 and IPv6
-winston.info('Server listening on port ' + argv.port);
+winston.info('Server listening on port %d', argv.port);
