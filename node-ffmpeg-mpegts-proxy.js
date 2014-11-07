@@ -6,6 +6,7 @@ var winston = require('winston');
 var http = require("http");
 var spawn = require('child_process').spawn;
 var fs = require('fs');
+var avconv = require('avconv');
 
 /*
  * Read command line options
@@ -95,37 +96,47 @@ var server = http.createServer(function (request, response) {
 	
 	// Indicates whether avconv should be restarted on failure
 	var shouldRestart = true;
+	var stream = null;
 	
 	/**
 	 * Spawns an avconv process and pipes its output to the response input
 	 * @returns {undefined}
 	 */
-	var startAvconv = function() {
-		avconv = spawn(argv.avconv, avconvOptions);
-		avconv.stdout.pipe(response, {end: false});
-		
-		// Handle avconv exits
-		avconv.on('close', function (code) {
-			// Restart the process
+	var streamingLoop = function() {
+		stream = avconv(avconvOptions);
+		stream.pipe(response);
+
+		// Output debug information about the input stream
+		stream.on('meta', function(meta) {
+			winston.debug('Input stream metadata: ', meta);
+		});
+
+		// Kill the process on error
+		stream.on('error', function() {
+			stream.kill();
+		});
+
+		// Respawn on exit
+		stream.on('exit', function(code, signal) {
+			winston.error('avconv exited with code %d and signal %s', code, signal);
+			
 			if (shouldRestart)
 			{
-				winston.error('avconv exited with code ' + code);
-				winston.info(remoteAddress + ' still connected, restarting avconv ...');
-				startAvconv();
+				winston.info('%s still connected, restarting avconv ...', remoteAddress);
+				streamingLoop();
 			}
 		});
 	};
 	
 	// Start serving data
-	var avconv;
-	startAvconv();
-
+	streamingLoop();
+	
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
 		winston.info('%s disconnected, stopping avconv', remoteAddress);
 		
 		shouldRestart = false;
-		avconv.kill();
+		stream.kill();
 	});
 });
 
