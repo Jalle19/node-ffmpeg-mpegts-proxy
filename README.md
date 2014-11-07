@@ -13,7 +13,7 @@ Since HLS input can be a bit unreliable, the converter process will be restarted
 ## Usage
 
 * install the required libraries by running `npm install` in the project directory
-* copy `data/sources.json` someplace and modify it
+* copy `examples/sources.json` someplace and modify it
 * run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
 
 ```
@@ -22,7 +22,7 @@ Usage: nodejs ./node-ffmpeg-mpegts-proxy.js -p <port> [-a <avconv>] [-q | -v] [-
 Options:
   -p, --port     The port the HTTP server should be listening on            [required]
   -a, --avconv   The path to avconv, defaults to just "avconv"              [default: "avconv"]
-  -s, --sources  The path to sources.json, defaults to "data/sources.json"  [default: "data/sources.json"]
+  -s, --sources  The path to sources.json                                   [required]
   -q, --quiet    Disable all logging to stdout
   -v, --verbose  Enable verbose logging (shows the output from avconv)
 ```
@@ -31,7 +31,26 @@ Once the proxy is running, streams are available on the e.g. `http://localhost:9
 
 ### Configuring sources
 
-Sources are read from `data/sources.json` by default. The location to the source definitions can be changed with the `-s` switch. The `url` attribute determines through which URL the stream is accessible. It has to begin with a forward slash (`/`). The `name` and `provider` values are injected into the stream as the service name and provider. The `source` value can be anything that ffmpeg can use as input.
+Sources are read from the file specified when starting the program (use `example/sources.json` as a starting point). The file contains an array of JSON objects with the following definition:
+
+* `name`: the service name
+* `provider`: the name of the service provider
+* `url`: the relative URL the stream will be available on when served
+* `source`: the source URL
+
+#### Example 
+
+```
+[
+        {
+                "name": "Channel One",
+                "provider": "Provider One",
+                "url": "/channel1",
+                "source": "http://iptv.example.com/channel1.m3u8"
+        },
+        ...
+]
+```
 
 ### Running as a service
 
