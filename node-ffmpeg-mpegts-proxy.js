@@ -122,7 +122,7 @@ var server = http.createServer(function (request, response) {
 
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
-		winston.info(remoteAddress + ' disconnected, stopping avconv');
+		winston.info('%s disconnected, stopping avconv', remoteAddress);
 		
 		shouldRestart = false;
 		avconv.kill();
