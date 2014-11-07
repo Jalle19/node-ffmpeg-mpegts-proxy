@@ -70,7 +70,7 @@ var server = http.createServer(function (request, response) {
 
 	if (source === null)
 	{
-		winston.info('Unknown source %s', requested);
+		winston.info('Unknown source %s', request.url);
 
 		response.writeHead(404, {"Content-Type": "text/plain"});
 		response.write("404 Not Found\n");
