@@ -60,7 +60,10 @@ var server = http.createServer(function (request, response) {
 
 	for (var i = 0; i < sources.length; i++)
 	{
-		if (sources[i].url === request.url)
+		// Ensure there's a leading slash and no trailing slashes
+		var sourceUrl = '/' + sources[i].url.replace(/^\/|\/$/g, '');
+		
+		if (sourceUrl === request.url)
 		{
 			source = sources[i];
 			break;
