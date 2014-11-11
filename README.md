@@ -38,6 +38,8 @@ Sources are read from the file specified when starting the program (use `example
 * `url`: the relative URL the stream will be available on when served
 * `source`: the source URL
 
+The program listens to changes made to the source file and reloads it automatically whenever it is changed. The main idea behind this is to support source URLs that contain parameter that change frequently and need to be adapted for (e.g. session IDs).
+
 #### Example 
 
 ```
