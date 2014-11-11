@@ -41,11 +41,31 @@ if (!argv.quiet)
 	});
 }
 
-/*
- * Read the source definitions
+/**
+ * Loads the source definitions from disk
+ * @returns {undefined}
  */
-var sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
-winston.info('Loaded %d sources', sources.length);
+var loadSources = function() {
+	sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
+	winston.info('Loaded %d sources', sources.length);
+};
+
+/*
+ * Holds the source definitions
+ */
+var sources;
+
+// Load the sources once and set up a watch that reloads them whenever the file 
+// is changed
+loadSources();
+
+fs.watch(argv.sources, function(event) {
+	if (event === 'change')
+	{
+		winston.info('Source definitions have changed, reloading ...');
+		loadSources();
+	}
+});
 
 /**
  * The main HTTP server process
