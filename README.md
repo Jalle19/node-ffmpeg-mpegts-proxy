@@ -56,7 +56,7 @@ The program listens to changes made to the source file and reloads it automatica
 
 ### Running as a service
 
-To turn the proxy into a proper daemon that can be started and stopped like other services, copy the init script from the `debian` folder to `/etc/init.d/` and run the following commands:
+To turn the proxy into a proper daemon that can be started and stopped like other services, copy the init script from the `support` folder to `/etc/init.d/` (only tested on Debian) and run the following commands:
 
 ```
 sudo chmod +x /etc/init.d/node-ffmpeg-mpegts-proxy
