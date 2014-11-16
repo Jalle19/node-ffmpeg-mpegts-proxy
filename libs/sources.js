@@ -1,4 +1,5 @@
 var fs = require('fs');
+var chokidar = require('chokidar');
 
 /**
  * The name of the file that contains the source definitions
@@ -37,12 +38,10 @@ var load = function(_filename) {
 	_load();
 
 	// Watch the file for changes and reload when changed
-	fs.watch(filename, function(event) {
-		if (event === 'change')
-		{
-			logger.info('Source definitions have changed, reloading ...');
-			_load();
-		}
+	var watch = chokidar.watch(filename);
+	watch.on('change', function() {
+		logger.info('Source definitions have changed, reloading ...');
+		_load();
 	});
 };
 
