@@ -31,7 +31,7 @@ Once the proxy is running, streams are available on the e.g. `http://localhost:9
 
 ### Configuring sources
 
-Sources are read from the file specified when starting the program (use `example/sources.json` as a starting point). The file contains an array of JSON objects with the following definition:
+Sources are read from the file specified when starting the program (use `examples/sources.json` as a starting point). The file contains an array of JSON objects with the following definition:
 
 * `name`: the service name
 * `provider`: the name of the service provider
