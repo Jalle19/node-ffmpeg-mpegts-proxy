@@ -5,8 +5,8 @@ var yargs = require('yargs');
 var winston = require('winston');
 var http = require("http");
 var spawn = require('child_process').spawn;
-var fs = require('fs');
 var avconv = require('avconv');
+var sources = require('./libs/sources');
 
 /*
  * Read command line options
@@ -42,40 +42,10 @@ if (!argv.quiet)
 }
 
 /**
- * Loads the source definitions from disk. If the new sources cannot be read, 
- * the old ones remain untouched
- * @returns {undefined}
+ * Configure the sources module
  */
-var loadSources = function() {
-	try {
-		var newSources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
-	}
-	catch (SyntaxError)
-	{
-		winston.error('Unable to read source definitions, JSON is malformed');
-		return;
-	}
-	
-	winston.info('Loaded %d sources', newSources.length);
-	sources = newSources;
-};
-
-/*
- * Holds the source definitions
- */
-var sources;
-
-// Load the sources once and set up a watch that reloads them whenever the file 
-// is changed
-loadSources();
-
-fs.watch(argv.sources, function(event) {
-	if (event === 'change')
-	{
-		winston.info('Source definitions have changed, reloading ...');
-		loadSources();
-	}
-});
+sources.setLogger(winston);
+var sourceDefinitions = sources.load(argv.sources);
 
 /**
  * The main HTTP server process
@@ -85,20 +55,8 @@ var server = http.createServer(function (request, response) {
 	var remoteAddress = request.connection.remoteAddress;
 	winston.debug('Got request for %s from %s', request.url, remoteAddress);
 
-	// Determine which source to serve based on the requested URL
-	var source = null;
-
-	for (var i = 0; i < sources.length; i++)
-	{
-		// Ensure there's a leading slash and no trailing slashes
-		var sourceUrl = '/' + sources[i].url.replace(/^\/|\/$/g, '');
-		
-		if (sourceUrl === request.url)
-		{
-			source = sources[i];
-			break;
-		}
-	}
+	// Find the source definition
+	var source = sources.getByUrl(request.url);
 
 	if (source === null)
 	{
