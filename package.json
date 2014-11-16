@@ -1,7 +1,7 @@
 {
   "name": "node-ffmpeg-mpegts-proxy",
   "description": "Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS over HTTP",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "main": "./node-ffmpeg-mpegts-proxy.js",
   "author": {
     "name": "Sam Stenvall",
