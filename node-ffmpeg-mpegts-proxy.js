@@ -42,12 +42,22 @@ if (!argv.quiet)
 }
 
 /**
- * Loads the source definitions from disk
+ * Loads the source definitions from disk. If the new sources cannot be read, 
+ * the old ones remain untouched
  * @returns {undefined}
  */
 var loadSources = function() {
-	sources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
-	winston.info('Loaded %d sources', sources.length);
+	try {
+		var newSources = JSON.parse(fs.readFileSync(argv.sources, 'utf8'));
+	}
+	catch (SyntaxError)
+	{
+		winston.error('Unable to read source definitions, JSON is malformed');
+		return;
+	}
+	
+	winston.info('Loaded %d sources', newSources.length);
+	sources = newSources;
 };
 
 /*
