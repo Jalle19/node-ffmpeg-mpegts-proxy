@@ -7,6 +7,7 @@ var http = require("http");
 var spawn = require('child_process').spawn;
 var avconv = require('avconv');
 var sources = require('./libs/sources');
+var options = require('./libs/options');
 
 /*
  * Read command line options
@@ -75,16 +76,8 @@ var server = http.createServer(function (request, response) {
 	});
 
 	// Define options for the child process
-	var avconvOptions = [
-		'-re',
-		'-i', source.source,
-		'-vcodec', 'copy',
-		'-acodec', 'copy',
-		'-metadata', 'service_provider=' + source.provider,
-		'-metadata', 'service_name=' + source.name,
-		'-f', 'mpegts',
-		'pipe:1' // Use stdout as output
-	];
+	var avconvOptions = options.getAvconvOptions(source);
+	winston.silly("Options passed to avconv: " + avconvOptions);
 	
 	// Indicates whether avconv should be restarted on failure
 	var shouldRestart = true;
