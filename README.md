@@ -21,6 +21,7 @@ Usage: nodejs ./node-ffmpeg-mpegts-proxy.js -p <port> [-a <avconv>] [-q | -v] [-
 
 Options:
   -p, --port     The port the HTTP server should be listening on            [required]
+  -l, --listen   The address to listen on                                   [default: "::"]
   -a, --avconv   The path to avconv, defaults to just "avconv"              [default: "avconv"]
   -s, --sources  The path to sources.json                                   [required]
   -q, --quiet    Disable all logging to stdout
