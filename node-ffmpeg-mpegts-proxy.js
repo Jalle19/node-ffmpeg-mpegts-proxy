@@ -5,7 +5,7 @@ var yargs = require('yargs');
 var winston = require('winston');
 var http = require("http");
 var spawn = require('child_process').spawn;
-var avconv = require('avconv');
+var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
 
@@ -88,7 +88,7 @@ var server = http.createServer(function (request, response) {
 	 * @returns {undefined}
 	 */
 	var streamingLoop = function() {
-		stream = avconv(avconvOptions);
+		stream = avconv(avconvOptions, argv.a);
 		stream.pipe(response);
 
 		// Output debug information about the input stream
