@@ -14,33 +14,33 @@ var filename;
 var sources;
 
 /**
- * The current logger instance
+ * Callbacks
  * @type type
  */
-var logger;
+var onSourceChange;
+var onSyntaxError;
+var onLoad ;
 
 /**
- * Sets the logger instance
- * @param {type} instance
- * @returns {undefined}
- */
-var setLogger = function(instance) {
-	logger = instance;
-};
-
-/**
- * Loads source definitions from the specified file
+ * Loads source definitions from the specified file and attach the callbacks
  * @param {type} _filename
+ * @param callback
+ * @param callback
+ * @param callback
  * @returns {undefined}
  */
-var load = function(_filename) {
+var load = function(_filename, cbonSourceChange, cbonSyntaxError, cbonLoad) {
 	filename = _filename;
+	onSourceChange = cbonSourceChange;
+	onSyntaxError = cbonSyntaxError;
+	onLoad = cbonLoad;
+	
 	_load();
 
 	// Watch the file for changes and reload when changed
 	var watch = chokidar.watch(filename);
 	watch.on('change', function() {
-		logger.info('Source definitions have changed, reloading ...');
+		onSourceChange();
 		_load();
 	});
 };
@@ -80,12 +80,12 @@ var _load = function() {
 	}
 	catch (SyntaxError)
 	{
-		logger.error('Unable to read source definitions, JSON is malformed');
+		onSyntaxError();
 		return;
 	}
 
 	// Replace sources with the new ones
-	logger.info('Loaded %d sources', newSources.length);
+	onLoad(newSources.length);
 	sources = newSources;
 };
 
@@ -93,4 +93,3 @@ var _load = function() {
 var exports = module.exports = {};
 exports.getByUrl = getByUrl;
 exports.load = load;
-exports.setLogger = setLogger;

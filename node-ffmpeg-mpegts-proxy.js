@@ -48,8 +48,22 @@ if (!argv.quiet)
 /**
  * Configure the sources module
  */
-sources.setLogger(winston);
-var sourceDefinitions = sources.load(argv.sources);
+var onSourceChange = function() {
+	winston.info('Source definitions have changed, reloading ...');
+};
+
+var onSyntaxError = function() {
+	winston.info('Unable to read source definitions, JSON is malformed');
+};
+
+var onLoad = function(numSources) {
+	winston.info('Loaded %d sources', numSources);
+};
+
+var sourceDefinitions = sources.load(argv.sources, 
+	onSourceChange,
+	onSyntaxError,
+	onLoad);
 
 /**
  * The main HTTP server process
