@@ -3,7 +3,9 @@
 		"name": "Channel One",
 		"provider": "Provider One",
 		"url": "/channel1",
-		"source": "http://example.com/channel1"
+		"source": "http://example.com/channel1",
+		"prescript": "/tmp/pre.sh",
+		"postscript": "/tmp/post.sh"
 	},
 	{
 		"name": "Channel Two",

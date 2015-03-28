@@ -4,7 +4,7 @@
 var yargs = require('yargs');
 var winston = require('winston');
 var http = require("http");
-var spawn = require('child_process').spawn;
+var child_process = require('child_process');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
@@ -86,6 +86,13 @@ var server = http.createServer(function (request, response) {
 
 		return;
 	}
+	
+	// Run eventual pre-script
+	if (source.prescript)
+	{
+		winston.debug("Executing pre-script");
+		child_process.spawnSync(source.prescript, [source.source]);
+	}
 
 	// Tell the client we're sending MPEG-TS data
 	response.writeHead(200, {
@@ -144,6 +151,13 @@ var server = http.createServer(function (request, response) {
 		
 		shouldRestart = false;
 		stream.kill();
+		
+		// Run eventual post-script
+		if (source.postscript)
+		{
+			winston.debug("Executing post-script");
+			child_process.spawnSync(source.postscript, [source.source]);
+		}
 	});
 });
 
