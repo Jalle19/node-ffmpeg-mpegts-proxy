@@ -7,7 +7,7 @@ Since HLS input can be a bit unreliable, the converter process will be restarted
 
 ## Requirements
 
-* nodejs
+* nodejs >= 0.12
 * avconv
 
 ## Usage
