@@ -18,7 +18,7 @@ var sources;
  * @type type
  */
 var onSourceChange;
-var onSyntaxError;
+var onParserError;
 var onLoad ;
 
 /**
@@ -29,10 +29,10 @@ var onLoad ;
  * @param callback
  * @returns {undefined}
  */
-var load = function(_filename, cbonSourceChange, cbonSyntaxError, cbonLoad) {
+var load = function(_filename, cbonSourceChange, cbonParserError, cbonLoad) {
 	filename = _filename;
 	onSourceChange = cbonSourceChange;
-	onSyntaxError = cbonSyntaxError;
+	onParserError = cbonParserError;
 	onLoad = cbonLoad;
 	
 	_load();
@@ -78,9 +78,8 @@ var _load = function() {
 	try {
 		var newSources = JSON.parse(fs.readFileSync(filename, 'utf8'));
 	}
-	catch (SyntaxError)
-	{
-		onSyntaxError();
+	catch (e) {
+		onParserError(e);
 		return;
 	}
 

@@ -52,8 +52,8 @@ var onSourceChange = function() {
 	winston.info('Source definitions have changed, reloading ...');
 };
 
-var onSyntaxError = function() {
-	winston.info('Unable to read source definitions, JSON is malformed');
+var onParserError = function(error) {
+	winston.info('Unable to read source definitions: %s', error.toString());
 };
 
 var onLoad = function(numSources) {
@@ -62,7 +62,7 @@ var onLoad = function(numSources) {
 
 var sourceDefinitions = sources.load(argv.sources, 
 	onSourceChange,
-	onSyntaxError,
+	onParserError,
 	onLoad);
 
 /**
