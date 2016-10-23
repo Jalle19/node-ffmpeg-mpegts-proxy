@@ -112,7 +112,14 @@ var server = http.createServer(function (request, response) {
 	 * @returns {undefined}
 	 */
 	var streamingLoop = function() {
-		stream = avconv(avconvOptions, argv.a);
+		// Add "http_proxy" to the avconv environment if it is defined
+		var environment = process.env;
+
+		if (source.http_proxy) {
+			environment.http_proxy = source.http_proxy;
+		}
+		
+		stream = avconv(avconvOptions, argv.a, environment);
 		stream.pipe(response);
 
 		// Output debug information about the input stream

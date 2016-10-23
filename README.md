@@ -41,6 +41,7 @@ Sources are read from the file specified when starting the program (use `example
 * `avconvOptions`: (optional) special avconv parameters for this source. This is an object containing two arrays, `input`and `output`.
 * `prescript`: (optional) script to run before transcoding starts. Useful if you need to bring up temporary VPN interfaces etc. The first argument to the script is the source URL.
 * `postscript`: (optional) same as `prescript` except it's run when streaming is stopped.
+* `http_proxy`: (optional) the HTTP proxy to use for the source (e.g. `http://proxy.example.com:8080`)
 
 The program listens to changes made to the source file and reloads it automatically whenever it is changed. The main idea behind this is to support source URLs that contain parameter that change frequently and need to be adapted for (e.g. session IDs). If the changes you make result in the file being unreadable (malformed JSON) it will complain about that and continue using the previous source definitions (if any). Below is an excerpt from the example source file.
 
