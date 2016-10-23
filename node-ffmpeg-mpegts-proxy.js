@@ -119,7 +119,14 @@ var server = http.createServer(function (request, response) {
 			environment.http_proxy = source.http_proxy;
 		}
 		
-		stream = avconv(avconvOptions, argv.a, environment);
+		// Determine the avconv binary to use
+		var avconvBinary = argv.a;
+
+		if (source.avconv) {
+			avconvBinary = source.avconv;
+		}
+		
+		stream = avconv(avconvOptions, avconvBinary, environment);
 		stream.pipe(response);
 
 		// Output debug information about the input stream
