@@ -132,7 +132,14 @@ var server = http.createServer(function (request, response) {
 
 		// Respawn on exit
 		stream.on('exit', function(code) {
-			winston.error('avconv exited with code %d', code);
+			var message = 'avconv exited with code %d';
+			
+			// Don't log normal exits as errors. 255 happens when the client presses stop.
+			if (code !== 0 && code !== 255) {
+				winston.error(message, code);
+			} else {
+				winston.debug(message, code);
+			}
 			
 			if (shouldRestart)
 			{
