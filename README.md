@@ -111,10 +111,43 @@ error message, this is what you need.
 
 ### Running as a service
 
-To turn the proxy into a proper daemon that can be started and stopped like other services, copy the init script from 
-the `support` folder to `/etc/init.d/` (only tested on Debian) and run the following commands:
+You can turn the proxy into a proper daemon that can be started and stopped like other services. Start by placing your 
+source definitions in `/etc/node-ffmpeg-mpegts-proxy/sources.json`, then follow the instructions below for your 
+startup system.
 
-```
-sudo chmod +x /etc/init.d/node-ffmpeg-mpegts-proxy
-sudo update-rc.d node-ffmpeg-mpegts-proxy defaults
-```
+#### Systemd (Ubuntu >= 16.04, Debian >= Jessie)
+
+* Copy `support/systemd/node-ffmpeg-mpegts-proxy.service` to `/lib/systemd/system` and modify it if necessary (e.g. 
+to change the parameters passed to it or the user it should run as)
+* Run `sudo systemctl enable node-ffmpeg-mpegts-proxy.service` to enable the service
+* Run `sudo systemctl start node-ffmpeg-mpegts-proxy.service` to start the service
+
+If you make any changes to `/lib/systemd/system/node-ffmpeg-mpegts-proxy.service` after you've enabled the service you 
+will have to run `sudo systemctl daemon-reload` for the changes to take effect.
+
+The output from the application is logged to `/var/log/node-ffmpeg-mpegts-proxy.log`
+
+#### Upstart (Ubuntu 14.04)
+
+* Copy `support/upstart/node-ffmpeg-mpegts-proxy.conf` to `/etc/init/` and modify it if necessary (e.g. to change the 
+parameters passed to it or the user it should run as)
+* Run `sudo service node-ffmpeg-mpegts-proxy start`
+
+The output from the application is logged to `/var/log/upstart/node-ffmpeg-mpegts-proxy.log`
+
+#### SysVinit (Debian Wheezy)
+
+* Copy `sysvinit/node-ffmpeg-mpegts-proxy` to `/etc/init.d`, modify it if necessary (e.g. to change the parameters 
+passed to it or the user it should run as)
+* Run `sudo chmod +x /etc/init.d/node-ffmpeg-mpegts-proxy`
+* Run `sudo update-rc.d node-ffmpeg-mpegts-proxy defaults` to enable the service on startup
+* Run `sudo /etc/init.d/node-ffmpeg-mpegts-proxy start` to start the service
+
+The output from the application is logged to `/var/log/node-ffmpeg-mpegts-proxy.log`
+
+## Development environment
+
+Install nodejs and ffmpeg locally, no virtual machines required.
+
+In order to easily test the startup/service scripts there is a `Vagrantfile` which starts three separate virtual 
+machines, one for each supported init system.

@@ -10,9 +10,9 @@
 ### END INIT INFO
 
 # MODIFY THESE
-dir="/var/www/node-ffmpeg-mpegts-proxy"
+dir="/vagrant"
 user="nobody"
-cmd="nodejs node-ffmpeg-mpegts-proxy.js -p 9128"
+cmd="/usr/bin/nodejs node-ffmpeg-mpegts-proxy.js -p 9128 -s /etc/node-ffmpeg-mpegts-proxy/sources.json >> /var/log/node-ffmpeg-mpegts-proxy.log 2>&1"
 
 name=`basename $0`
 pid_file="/var/run/$name.pid"

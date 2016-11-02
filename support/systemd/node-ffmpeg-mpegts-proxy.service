@@ -1,0 +1,15 @@
+[Unit]
+Description=node-ffmpeg-mpegts-proxy
+After=network.target
+After=syslog.target
+
+[Service]
+User=vagrant
+Group=vagrant
+Restart=always
+ExecStart=/usr/bin/nodejs ./node-ffmpeg-mpegts-proxy.js -p 9128 -s /etc/node-ffmpeg-mpegts-proxy/sources.json
+WorkingDirectory=/vagrant
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
