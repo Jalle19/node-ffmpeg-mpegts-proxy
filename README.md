@@ -16,9 +16,9 @@ response ending) until the client closes the connection (in which case the proce
 
 ## Usage
 
-* install the required libraries by running `npm install` in the project directory
-* copy `examples/sources.json` someplace and modify it
-* run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
+* Install the required libraries by running `npm install` in the project directory
+* Copy `examples/sources.json` someplace and modify it
+* Run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
 
 ```
 Usage: nodejs ./node-ffmpeg-mpegts-proxy.js -p <port> [-a <avconv>] [-q | -v] [-s <sources>]
