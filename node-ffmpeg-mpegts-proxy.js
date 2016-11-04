@@ -14,6 +14,7 @@ var options = require('./libs/options');
  * Define some global constants
  */
 var STREAMING_RESTART_DELAY_SECONDS = 5;
+var MINIMUM_BYTES_RECEIVED_SUCCESS = 4096;
 
 /*
  * Read command line options
@@ -113,6 +114,11 @@ var server = http.createServer(function (request, response) {
 	var shouldRestart = true;
 	var stream = null;
 	
+	// Keep track of how much data has been pushed by avconv. We'll use this to determine whether streaming actually 
+	// started successfully
+	var bytesRecieved = 0;
+	var streamingStarted = false;
+	
 	/**
 	 * Spawns an avconv process and pipes its output to the response input
 	 * @returns {undefined}
@@ -143,10 +149,18 @@ var server = http.createServer(function (request, response) {
 		// Print avconv status messages
 		stream.on('message', function(message) {
 			winston.silly(message);
+			bytesRecieved += message.length;
+			
+			// Check if streaming seems to have started
+			if (bytesRecieved >= MINIMUM_BYTES_RECEIVED_SUCCESS && !streamingStarted) {
+				winston.info('avconv started successfully');
+				streamingStarted = true;
+			}
 		});
 
 		// Respawn on exit
 		stream.on('exit', function(code) {
+			streamingStarted = false;
 			var message = 'avconv exited with code %d';
 			
 			// Don't log normal exits as errors. 255 happens when the client presses stop.
