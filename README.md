@@ -16,7 +16,8 @@ response ending) until the client closes the connection (in which case the proce
 
 ## Usage
 
-* Install the required libraries by running `npm install` in the project directory
+* Install the required libraries by running `npm install` in the project directory. You will have to run this command 
+again if you update to a newer version.
 * Copy `examples/sources.json` someplace and modify it
 * Run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
 
