@@ -6,6 +6,7 @@ var winston = require('winston');
 var http = require("http");
 var child_process = require('child_process');
 var sleep = require('sleep');
+var executable = require('executable');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
@@ -97,8 +98,8 @@ var server = http.createServer(function (request, response) {
 	// Run eventual pre-script
 	if (source.prescript)
 	{
-		winston.debug("Executing pre-script");
-		child_process.spawnSync(source.prescript, [source.source, source.url, source.provider, source.name]);
+		winston.debug("Executing pre-script %s", source.prescript);
+		runPrePostScript(source.prescript, [source.source, source.url, source.provider, source.name]);
 	}
 
 	// Tell the client we're sending MPEG-TS data
@@ -195,11 +196,30 @@ var server = http.createServer(function (request, response) {
 		// Run eventual post-script
 		if (source.postscript)
 		{
-			winston.debug("Executing post-script");
-			child_process.spawnSync(source.postscript, [source.source, source.url, source.provider, source.name]);
+			winston.debug("Executing post-script %s", source.postscript);
+			runPrePostScript(source.postscript, [source.source, source.url, source.provider, source.name]);
 		}
 	});
 });
+
+/**
+ * Runs the specified script with the specified parameters.
+ *
+ * @param scriptPath
+ * @param params
+ */
+var runPrePostScript = function(scriptPath, params) {
+	try {
+		if (executable.sync(scriptPath)) {
+			child_process.spawnSync(scriptPath, params);
+		} else {
+			winston.error("The specified script doesn't is not executable");
+		}
+	}
+	catch (e) {
+		winston.error("The specified script doesn't exist");
+	}
+};
 
 // Start the server
 server.listen(argv.port, argv.l);
