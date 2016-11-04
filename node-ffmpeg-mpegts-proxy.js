@@ -129,11 +129,6 @@ var server = http.createServer(function (request, response) {
 		stream = avconv(avconvOptions, avconvBinary, environment);
 		stream.pipe(response);
 
-		// Output debug information about the input stream
-		stream.on('meta', function(meta) {
-			winston.debug('Input stream metadata: ', meta);
-		});
-
 		// Kill the process on error
 		stream.on('error', function() {
 			stream.kill();
