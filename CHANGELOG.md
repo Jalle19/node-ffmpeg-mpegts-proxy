@@ -1,5 +1,14 @@
 # Change log
 
+## 0.7.0
+
+* show an error if pre/post-scripts don't exist or are not executable 
+* pass more parameters to pre/post-scripts
+* log when streaming has started successfully
+* throttle avconv restarts to once per 5 seconds
+* remove some unused code
+* add startup scripts for Upstart and Systemd in addition to SysVinit
+
 ## 0.6.0
 
 * support specifying the HTTP proxy to use per stream
