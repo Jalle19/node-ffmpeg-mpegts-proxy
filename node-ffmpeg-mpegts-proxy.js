@@ -5,9 +5,15 @@ var yargs = require('yargs');
 var winston = require('winston');
 var http = require("http");
 var child_process = require('child_process');
+var sleep = require('sleep');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
+
+/*
+ * Define some global constants
+ */
+var STREAMING_RESTART_DELAY_SECONDS = 5;
 
 /*
  * Read command line options
@@ -152,7 +158,11 @@ var server = http.createServer(function (request, response) {
 			
 			if (shouldRestart)
 			{
-				winston.info('%s still connected, restarting avconv ...', remoteAddress);
+				winston.info('%s still connected, restarting avconv after %d seconds ...', remoteAddress,
+					STREAMING_RESTART_DELAY_SECONDS);
+
+				// Throttle restart attempts, otherwise it will try to respawn as fast as possible
+				sleep.sleep(STREAMING_RESTART_DELAY_SECONDS);
 				streamingLoop();
 			}
 		});
