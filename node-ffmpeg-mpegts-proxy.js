@@ -60,7 +60,7 @@ var onLoad = function(numSources) {
 	winston.info('Loaded %d sources', numSources);
 };
 
-var sourceDefinitions = sources.load(argv.sources, 
+sources.load(argv.sources, 
 	onSourceChange,
 	onParserError,
 	onLoad);
