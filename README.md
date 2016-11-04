@@ -47,7 +47,8 @@ The file contains an array of JSON objects with the following definition:
 * `avconvOptions`: (optional) special avconv parameters for this source. This is an object containing two arrays, 
 `input`and `output`.
 * `prescript`: (optional) script to run before transcoding starts. Useful if you need to bring up temporary VPN 
-interfaces etc. The first argument to the script is the source URL.
+interfaces etc. Four arguments are passed to the script; the source URL, the relative stream URL, the provider name 
+and the channel name.
 * `postscript`: (optional) same as `prescript` except it's run when streaming is stopped.
 * `http_proxy`: (optional) the HTTP proxy to use for the source (e.g. `http://proxy.example.com:8080`)
 * `avconv`: (optional) source-specific override of the avconv binary to use. This can be useful if you for some reason 

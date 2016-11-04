@@ -98,7 +98,7 @@ var server = http.createServer(function (request, response) {
 	if (source.prescript)
 	{
 		winston.debug("Executing pre-script");
-		child_process.spawnSync(source.prescript, [source.source]);
+		child_process.spawnSync(source.prescript, [source.source, source.url, source.provider, source.name]);
 	}
 
 	// Tell the client we're sending MPEG-TS data
@@ -196,7 +196,7 @@ var server = http.createServer(function (request, response) {
 		if (source.postscript)
 		{
 			winston.debug("Executing post-script");
-			child_process.spawnSync(source.postscript, [source.source]);
+			child_process.spawnSync(source.postscript, [source.source, source.url, source.provider, source.name]);
 		}
 	});
 });
