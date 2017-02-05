@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "chokidar": "^0.10.9",
+    "command-exists": "^1.0.2",
     "executable": "^4.1.0",
     "sleep": "^4.0.0",
     "winston": "~0.8.1",
