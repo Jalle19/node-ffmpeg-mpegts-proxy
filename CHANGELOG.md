@@ -1,5 +1,10 @@
 # Change log
 
+## 0.7.1
+
+* exit immediately if avconv is not found or not executable
+* fix various issues with source reloading
+
 ## 0.7.0
 
 * show an error if pre/post-scripts don't exist or are not executable 
