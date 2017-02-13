@@ -10,6 +10,8 @@ var executable = require('executable');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
+var fs = require('fs');
+var u = require('url');
 
 /*
  * Define some global constants
@@ -82,7 +84,8 @@ var server = http.createServer(function (request, response) {
 	winston.debug('Got request for %s from %s', request.url, remoteAddress);
 
 	// Find the source definition
-	var source = sources.getByUrl(request.url);
+	var exploded = u.parse(request.url, true);
+	var source = sources.getByUrl(exploded.pathname);
 
 	if (source === null)
 	{
@@ -103,13 +106,26 @@ var server = http.createServer(function (request, response) {
 	}
 
 	// Tell the client we're sending MPEG-TS data
+        var mimeType = 'video/mp2t';
+        if (source.mime)
+		mimeType = source.mime;
 	response.writeHead(200, {
-		'Content-Type': 'video/mp2t'
+		'Content-Type': mimeType
 	});
 
+        if (source.file)
+	{
+		response.write(fs.readFileSync(source.file));
+		response.end();
+		return;
+	}
+
 	// Define options for the child process
-	var avconvOptions = options.getAvconvOptions(source);
-	winston.silly("Options passed to avconv: " + avconvOptions);
+	var avconvOptions = options.getInputAvconvOptions(source);
+	if (exploded.query.duration)
+		avconvOptions = avconvOptions.concat(['-t', exploded.query.duration]);
+	avconvOptions = avconvOptions.concat(options.getOutputAvconvOptions(source));
+	winston.debug("Options passed to avconv: " + avconvOptions);
 	
 	// Indicates whether avconv should be restarted on failure
 	var shouldRestart = true;
@@ -171,7 +187,7 @@ var server = http.createServer(function (request, response) {
 				winston.debug(message, code);
 			}
 			
-			if (shouldRestart)
+			if (shouldRestart && code !== 0)
 			{
 				winston.info('%s still connected, restarting avconv after %d seconds ...', remoteAddress,
 					STREAMING_RESTART_DELAY_SECONDS);
@@ -179,7 +195,9 @@ var server = http.createServer(function (request, response) {
 				// Throttle restart attempts, otherwise it will try to respawn as fast as possible
 				sleep.sleep(STREAMING_RESTART_DELAY_SECONDS);
 				streamingLoop();
-			}
+			} else {
+				response.end();
+ 			}
 		});
 	};
 	
