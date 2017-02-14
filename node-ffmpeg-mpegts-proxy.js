@@ -113,6 +113,20 @@ var server = http.createServer(function (request, response) {
 		'Content-Type': mimeType
 	});
 
+	if (source.script)
+	{
+		var options = {};
+		if (source.file)
+		{
+			options.input = fs.readFileSync(source.file);
+		}
+		options.env = { "HTTP_HOST": request.headers["host"] };
+		
+		response.write(child_process.spawnSync(source.script, options).stdout);
+		response.end();
+		return;
+	}
+
         if (source.file)
 	{
 		response.write(fs.readFileSync(source.file));
@@ -231,7 +245,7 @@ var runPrePostScript = function(scriptPath, params) {
 		if (executable.sync(scriptPath)) {
 			child_process.spawnSync(scriptPath, params);
 		} else {
-			winston.error("The specified script doesn't is not executable");
+			winston.error("The specified script is not executable");
 		}
 	}
 	catch (e) {
