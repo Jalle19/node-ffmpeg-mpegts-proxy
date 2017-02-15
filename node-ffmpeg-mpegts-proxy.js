@@ -115,14 +115,16 @@ var server = http.createServer(function (request, response) {
 
 	if (source.script)
 	{
-		var options = {};
+		var soptions = {};
 		if (source.file)
 		{
-			options.input = fs.readFileSync(source.file);
+			soptions.input = fs.readFileSync(source.file);
 		}
-		options.env = { "HTTP_HOST": request.headers["host"] };
+		soptions.env = { "HTTP_HOST": request.headers["host"] };
 		
-		response.write(child_process.spawnSync(source.script, options).stdout);
+		var result = child_process.spawnSync(source.script, soptions);
+		response.write(result.stdout);
+		winston.debug(result.stderr.toString());
 		response.end();
 		return;
 	}
@@ -253,6 +255,7 @@ var runPrePostScript = function(scriptPath, params) {
 	}
 };
 
-// Start the server
-server.listen(argv.port, argv.l);
-winston.info('Server listening on port %d', argv.port);
+// Start the server (must listen on both 80 and 5004)
+server.listen(80, argv.l);
+server.listen(5004, argv.l);
+winston.info('Server listening on ports 80 and 5004');
