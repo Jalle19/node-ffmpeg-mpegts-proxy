@@ -2,7 +2,7 @@
 	{
 		"name": "Channel One",
 		"provider": "Provider One",
-		"url": "/channel1",
+		"url": "/auto/v1",
 		"source": "http://example.com/channel1",
 		"prescript": "/tmp/pre.sh",
 		"postscript": "/tmp/post.sh"
@@ -10,13 +10,39 @@
 	{
 		"name": "Channel Two",
 		"provider": "Provider Two",
-		"url": "/channel2",
+		"url": "/auto/v2",
 		"source": "http://example.com/channel1"
 	},
 	{
 		"name": "Channel Three",
 		"provider": "Provider Three",
-		"url": "/channel3",
+		"url": "/auto/v3",
 		"source": "http://example.com/channel1"
+	},
+	{
+		"mime": "application/json",
+		"script": "./discover.sh",
+		"url": "/discover.json"
+	},
+	{
+		"mime": "application/json",
+		"script": "./lineup.sh",
+		"url": "/lineup.json"
+	},
+	{
+		"mime": "text/plain",
+		"file": "/dev/null",
+		"url": "/lineup.post"
+	},
+	{
+		"mime": "application/json",
+		"file": "lineup_status.json",
+		"url": "/lineup_status.json"
+	},
+	{
+		"mime": "text/html",
+		"file": "guide.html",
+		"prescript": "./guide.py",
+		"url": "/guide.html"
 	}
 ]
