@@ -23,20 +23,18 @@ var MINIMUM_BYTES_RECEIVED_SUCCESS = 4096;
  * Read command line options
  */
 var argv = yargs
-		.usage('Usage: $0 -p <port> -s <sources> [-a <avconv>] [-q | -v | -l]')
-		.alias('p', 'port')
+		.usage('Usage: $0 -s <sources> [-a <avconv>] [-q | -v | -l]')
 		.alias('l', 'listen')
 		.alias('a', 'avconv')
 		.alias('s', 'sources')
 		.alias('q', 'quiet')
 		.alias('v', 'verbose')
-		.demand(['p', 's'])
+		.demand(['s'])
 		.default('a', 'avconv')
 		.default('l', '::')
-		.describe('p', 'The port the HTTP server should be listening on')
 		.describe('l', 'The address to listen on')
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
-		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
+		.describe('s', 'The path to sources.json')
 		.describe('q', 'Disable all logging to stdout')
 		.describe('v', 'Enable verbose logging (shows the output from avconv)')
 		.argv;
