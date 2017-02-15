@@ -8,9 +8,7 @@
     "email": "neggelandia@gmail.com"
   },
   "keywords": [],
-  "licenses": {
-    "type": "gpl20"
-  },
+  "license": "GPL-2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/Jalle19/node-ffmpeg-mpegts-proxy.git"
@@ -19,7 +17,8 @@
     "url": "http://github.com/Jalle19/node-ffmpeg-mpegts-proxy/issues"
   },
   "dependencies": {
-    "chokidar": "^0.10.9",
+    "chokidar": "^1.6.1",
+    "command-exists": "^1.0.2",
     "executable": "^4.1.0",
     "sleep": "^4.0.0",
     "winston": "~0.8.1",

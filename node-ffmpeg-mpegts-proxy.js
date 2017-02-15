@@ -12,6 +12,7 @@ var sources = require('./libs/sources');
 var options = require('./libs/options');
 var fs = require('fs');
 var u = require('url');
+var commandExists = require('command-exists');
 
 /*
  * Define some global constants
@@ -72,6 +73,20 @@ sources.load(argv.sources,
 	onSourceChange,
 	onParserError,
 	onLoad);
+
+/**
+ * Check that the avconv is useable 
+ */
+if (!argv.avconv) {
+  argv.avconv = 'avconv';
+}
+
+commandExists(argv.avconv, function(err, exists) {
+  if (!exists) {
+    winston.error('avconv not found or is not executable');
+    process.exit();
+  }
+});
 
 /**
  * The main HTTP server process
