@@ -1,0 +1,11 @@
+{
+  "BaseURL": "http://HOST", 
+  "DeviceAuth": "test1234", 
+  "DeviceID": "HASH", 
+  "FirmwareName": "hdhomerun", 
+  "FirmwareVersion": "20150826", 
+  "FriendlyName": "HOST", 
+  "LineupURL": "http://HOST/lineup.json", 
+  "ModelNumber": "HDHR4-2DT", 
+  "TunerCount": 2
+}
