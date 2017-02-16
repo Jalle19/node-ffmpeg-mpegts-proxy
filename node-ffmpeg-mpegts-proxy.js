@@ -92,7 +92,7 @@ commandExists(argv.avconv, function(err, exists) {
  * The main HTTP server process
  * @type @exp;http@call;createServer
  */
-var server = http.createServer(function (request, response) {
+var serverCallback = function (request, response) {
 	var remoteAddress = request.connection.remoteAddress;
 	winston.debug('Got request for %s from %s', request.url, remoteAddress);
 
@@ -247,7 +247,7 @@ var server = http.createServer(function (request, response) {
 			runPrePostScript(source.postscript, [source.source, source.url, source.provider, source.name]);
 		}
 	});
-});
+};
 
 /**
  * Runs the specified script with the specified parameters.
@@ -269,6 +269,8 @@ var runPrePostScript = function(scriptPath, params) {
 };
 
 // Start the server (must listen on both 80 and 5004)
-server.listen(80, argv.l);
-server.listen(5004, argv.l);
+var server1 = http.createServer(serverCallback);
+var server2 = http.createServer(serverCallback);
+server1.listen(80, argv.l);
+server2.listen(5004, argv.l);
 winston.info('Server listening on ports 80 and 5004');
