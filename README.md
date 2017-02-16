@@ -136,6 +136,20 @@ by the client in the HTTP Host header (warning: not sanitised yet!).
 We also strip URL parameters from the URL requests before matching them to sources. The "duration" argument is explicitly matched and applied
 as an output avconv option, so that Plex stops streaming (and we do not treat this as an error state) after its desired time has expired.
 
+### Using with Plex
+
+You must run this program as root on a machine that isn't already running another web server.
+
+Then you must add a DVR from the Settings in the Plex Web App. It will not automatically discover your "device". You will need to enter the IP address
+or hostname of the server in the manual entry box. Tip: If you associate multiple IP addresses or hostnames with the same machine
+you will be able to reuse the server on multiple DVRs. This way you can exploit multiple Plex program guide regions. Note that the
+default discover.sh script will try its best to generate different HDHomeRun hardware IDs if you do this.
+
+Note that Plex appears to ignore the URL that you specify in the lineup for each channel and is hardcoded to use "/auto/vn" where
+n is the guide channel number.
+
+If you renumber channels you may get an error from Plex Web. Fix this by deselecting all of the channels, pressing Save, then editing again.
+
 ### Running as a service
 
 You can turn the proxy into a proper daemon that can be started and stopped like other services. Start by placing your 
