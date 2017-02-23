@@ -228,7 +228,7 @@ var runPrePostScript = function(scriptPath, params) {
 		if (executable.sync(scriptPath)) {
 			child_process.spawnSync(scriptPath, params);
 		} else {
-			winston.error("The specified script doesn't is not executable");
+			winston.error("The specified script is not executable");
 		}
 	}
 	catch (e) {
