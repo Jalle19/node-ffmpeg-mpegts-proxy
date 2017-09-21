@@ -54,12 +54,15 @@ var load = function(_filename, cbonSourceChange, cbonParserError, cbonLoad) {
 var getByUrl = function(url) {
 	var source = null;
 
+	// Strip extra parameters from the URL
+	var strippedUrl = url.replace(/[?].*/, '').replace(/[#].*/, '');
+
 	for (var i = 0; i < sources.length; i++)
 	{
 		// Ensure there's a leading slash and no trailing slashes
 		var sourceUrl = '/' + sources[i].url.replace(/^\/|\/$/g, '');
 
-		if (sourceUrl === url)
+		if (sourceUrl === strippedUrl)
 		{
 			source = sources[i];
 			break;
