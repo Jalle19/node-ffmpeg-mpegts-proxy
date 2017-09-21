@@ -1,0 +1,12 @@
+[
+	{
+		"GuideName": "Chamnel 1",
+		"GuideNumber": "100",
+		"URL": "http://HOST/auto/v100"
+	},
+	{
+		"GuideName": "Channel 2",
+		"GuideNumber": "200",
+		"URL": "http://HOST/auto/v200"
+	}
+]

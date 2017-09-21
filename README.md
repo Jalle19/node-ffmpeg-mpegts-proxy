@@ -9,6 +9,12 @@ handled by the `avconv` utility. Currently it simply remuxes the source stream i
 Since HLS input can be a bit unreliable, the converter process will be restarted automatically (without the HTTP 
 response ending) until the client closes the connection (in which case the process is killed).
 
+This version has been modified to support being a HDHomeRun interface directly into Plex DVR (Beta).
+
+You can use the examples/sources.json file and the included scripts to satisfy the endpoints that Plex exercises
+on a HDHomeRun device. THe sources.json syntax has been extended to make this function, and you can use the proxy
+in multiple DVRs. This is inspired (read: ported) from https://github.com/jkaberg/tvhProxy .
+
 ## Requirements
 
 * nodejs >= 0.12
@@ -22,10 +28,9 @@ again if you update to a newer version.
 * Run the program using `nodejs node-ffmpeg-mpegts-proxy.js`
 
 ```
-Usage: nodejs ./node-ffmpeg-mpegts-proxy.js -p <port> [-a <avconv>] [-q | -v] [-s <sources>]
+Usage: nodejs ./node-ffmpeg-mpegts-proxy.js [-a <avconv>] [-q | -v] [-s <sources>]
 
 Options:
-  -p, --port     The port the HTTP server should be listening on            [required]
   -l, --listen   The address to listen on                                   [default: "::"]
   -a, --avconv   The path to avconv, defaults to just "avconv"              [default: "avconv"]
   -s, --sources  The path to sources.json                                   [required]
@@ -33,8 +38,9 @@ Options:
   -v, --verbose  Enable verbose logging (shows the output from avconv)
 ```
 
-Once the proxy is running, streams are available on the e.g. `http://localhost:9128/channel1`, assuming port 9128 is 
-used and a source with the URL `/channel1` exists.
+Once the proxy is running, streams are available on the e.g. `http://localhost/channel1`, because the ports 80 and 5004 are 
+used to match the HDHomeRun and a source with the URL `/channel1` exists. The port argument is not available because Plex will
+only look on the expected ports.
 
 ### Configuring sources
 
@@ -110,6 +116,39 @@ In most cases you don't need any extra parameters, although one often needed one
 option (as in the example above). If you enable silly debugging mode (`-v`) and get an 
 `H.264 bitstream malformed, no startcode found, use the h264_mp4toannexb bitstream filter (-bsf h264_mp4toannexb)` 
 error message, this is what you need.
+
+#### HDHomeRun additions
+
+The sources.json format has been expanded to add further scripting capability and support for a sort of Server Name Identification
+(SNI) in order to have the proxy present different channel lists to different hostnames.
+
+First, you can specify serving of a fixed local file. This is done by specifying "mime" with a mime-type for the file
+and "file" for the relative path to the file on disk. The file is read synchronously so it must be small and not a stream. Tip: If you
+just want to emulate a HTTP 200 OK response, set "file" to "/dev/null".
+
+If a script must be triggered to generate the file, use "prescript" to run the script.
+
+Second, you can specify running a script and directly sending the output to the HTTP client. Specify "mime" and "script" for this.
+
+The script has been extended to support being run with "HTTP_HOST" environment variable provided which will be the "host:port" provided
+by the client in the HTTP Host header (warning: not sanitised yet!).
+
+We also strip URL parameters from the URL requests before matching them to sources. The "duration" argument is explicitly matched and applied
+as an output avconv option, so that Plex stops streaming (and we do not treat this as an error state) after its desired time has expired.
+
+### Using with Plex
+
+You must run this program as root on a machine that isn't already running another web server.
+
+Then you must add a DVR from the Settings in the Plex Web App. It will not automatically discover your "device". You will need to enter the IP address
+or hostname of the server in the manual entry box. Tip: If you associate multiple IP addresses or hostnames with the same machine
+you will be able to reuse the server on multiple DVRs. This way you can exploit multiple Plex program guide regions. Note that the
+default discover.sh script will try its best to generate different HDHomeRun hardware IDs if you do this.
+
+Note that Plex appears to ignore the URL that you specify in the lineup for each channel and is hardcoded to use "/auto/vn" where
+n is the guide channel number.
+
+If you renumber channels you may get an error from Plex Web. Fix this by deselecting all of the channels, pressing Save, then editing again.
 
 ### Running as a service
 

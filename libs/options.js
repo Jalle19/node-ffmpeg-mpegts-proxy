@@ -49,3 +49,5 @@ var getOutputAvconvOptions = function(source) {
 
 var exports = module.exports = {};
 exports.getAvconvOptions = getAvconvOptions;
+exports.getInputAvconvOptions = getInputAvconvOptions;
+exports.getOutputAvconvOptions = getOutputAvconvOptions;

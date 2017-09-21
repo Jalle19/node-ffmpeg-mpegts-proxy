@@ -10,6 +10,8 @@ var executable = require('executable');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
+var fs = require('fs');
+var u = require('url');
 var commandExists = require('command-exists');
 
 /*
@@ -22,20 +24,18 @@ var MINIMUM_BYTES_RECEIVED_SUCCESS = 4096;
  * Read command line options
  */
 var argv = yargs
-		.usage('Usage: $0 -p <port> -s <sources> [-a <avconv>] [-q | -v | -l]')
-		.alias('p', 'port')
+		.usage('Usage: $0 -s <sources> [-a <avconv>] [-q | -v | -l]')
 		.alias('l', 'listen')
 		.alias('a', 'avconv')
 		.alias('s', 'sources')
 		.alias('q', 'quiet')
 		.alias('v', 'verbose')
-		.demand(['p', 's'])
+		.demand(['s'])
 		.default('a', 'avconv')
 		.default('l', '::')
-		.describe('p', 'The port the HTTP server should be listening on')
 		.describe('l', 'The address to listen on')
 		.describe('a', 'The path to avconv, defaults to just "avconv"')
-		.describe('s', 'The path to sources.json, defaults to "data/sources.json"')
+		.describe('s', 'The path to sources.json')
 		.describe('q', 'Disable all logging to stdout')
 		.describe('v', 'Enable verbose logging (shows the output from avconv)')
 		.argv;
@@ -92,12 +92,13 @@ commandExists(argv.avconv, function(err, exists) {
  * The main HTTP server process
  * @type @exp;http@call;createServer
  */
-var server = http.createServer(function (request, response) {
+var serverCallback = function (request, response) {
 	var remoteAddress = request.connection.remoteAddress;
 	winston.debug('Got request for %s from %s', request.url, remoteAddress);
 
 	// Find the source definition
-	var source = sources.getByUrl(request.url);
+	var exploded = u.parse(request.url, true);
+	var source = sources.getByUrl(exploded.pathname);
 
 	if (source === null)
 	{
@@ -118,13 +119,42 @@ var server = http.createServer(function (request, response) {
 	}
 
 	// Tell the client we're sending MPEG-TS data
+        var mimeType = 'video/mp2t';
+        if (source.mime)
+		mimeType = source.mime;
 	response.writeHead(200, {
-		'Content-Type': 'video/mp2t'
+		'Content-Type': mimeType
 	});
 
+	if (source.script)
+	{
+		var soptions = {};
+		if (source.file)
+		{
+			soptions.input = fs.readFileSync(source.file);
+		}
+		soptions.env = { "HTTP_HOST": request.headers["host"] };
+		
+		var result = child_process.spawnSync(source.script, soptions);
+		response.write(result.stdout);
+		winston.debug(result.stderr.toString());
+		response.end();
+		return;
+	}
+
+        if (source.file)
+	{
+		response.write(fs.readFileSync(source.file));
+		response.end();
+		return;
+	}
+
 	// Define options for the child process
-	var avconvOptions = options.getAvconvOptions(source);
-	winston.silly("Options passed to avconv: " + avconvOptions);
+	var avconvOptions = options.getInputAvconvOptions(source);
+	if (exploded.query.duration)
+		avconvOptions = avconvOptions.concat(['-t', exploded.query.duration]);
+	avconvOptions = avconvOptions.concat(options.getOutputAvconvOptions(source));
+	winston.debug("Options passed to avconv: " + avconvOptions);
 	
 	// Indicates whether avconv should be restarted on failure
 	var shouldRestart = true;
@@ -186,7 +216,7 @@ var server = http.createServer(function (request, response) {
 				winston.debug(message, code);
 			}
 			
-			if (shouldRestart)
+			if (shouldRestart && code !== 0)
 			{
 				winston.info('%s still connected, restarting avconv after %d seconds ...', remoteAddress,
 					STREAMING_RESTART_DELAY_SECONDS);
@@ -194,7 +224,9 @@ var server = http.createServer(function (request, response) {
 				// Throttle restart attempts, otherwise it will try to respawn as fast as possible
 				sleep.sleep(STREAMING_RESTART_DELAY_SECONDS);
 				streamingLoop();
-			}
+			} else {
+				response.end();
+ 			}
 		});
 	};
 	
@@ -215,7 +247,7 @@ var server = http.createServer(function (request, response) {
 			runPrePostScript(source.postscript, [source.source, source.url, source.provider, source.name]);
 		}
 	});
-});
+};
 
 /**
  * Runs the specified script with the specified parameters.
@@ -236,6 +268,9 @@ var runPrePostScript = function(scriptPath, params) {
 	}
 };
 
-// Start the server
-server.listen(argv.port, argv.l);
-winston.info('Server listening on port %d', argv.port);
+// Start the server (must listen on both 80 and 5004)
+var server1 = http.createServer(serverCallback);
+var server2 = http.createServer(serverCallback);
+server1.listen(80, argv.l);
+server2.listen(5004, argv.l);
+winston.info('Server listening on ports 80 and 5004');
