@@ -14,9 +14,14 @@ var getAvconvOptions = function(source) {
  * @returns array
  */
 var getInputAvconvOptions = function(source) {
-	var options = [
-		'-re'
-	];
+	var options = [];
+
+	// Optionally disable realtime streaming
+	if (source.realtime !== false) {
+		options = [
+			'-re'
+		];
+	}
 
 	if (source.avconvOptions !== undefined && source.avconvOptions.input !== undefined)
 		options = options.concat(source.avconvOptions.input);

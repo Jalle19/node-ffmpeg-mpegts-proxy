@@ -47,6 +47,8 @@ The file contains an array of JSON objects with the following definition:
 * `source`: the source URL
 * `avconvOptions`: (optional) special avconv parameters for this source. This is an object containing two arrays, 
 `input`and `output`.
+* `realtime`: (optional) whether to add the `-re` input flag to the input options. Normally this is what you want, but 
+some sources may not work correctly without disabling this. Defaults to `true`. 
 * `prescript`: (optional) script to run before transcoding starts. Useful if you need to bring up temporary VPN 
 interfaces etc. Four arguments are passed to the script; the source URL, the relative stream URL, the provider name 
 and the channel name.
