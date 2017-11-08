@@ -1,5 +1,9 @@
 # Change log
 
+## 0.8.0
+
+* add ability to disable the "-re" flag for specific sources
+
 ## 0.7.1
 
 * exit immediately if avconv is not found or not executable
