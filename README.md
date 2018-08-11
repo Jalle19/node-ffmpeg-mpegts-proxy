@@ -1,6 +1,8 @@
 node-ffmpeg-mpegts-proxy
 ========================
 
+[![Build Status](https://travis-ci.org/Jalle19/node-ffmpeg-mpegts-proxy.svg?branch=master)](https://travis-ci.org/Jalle19/node-ffmpeg-mpegts-proxy)
+
 Simple proxy for leveraging ffmpeg to convert any source URL into MPEG-TS and serve it on demand over HTTP. It has been 
 designed for proxying HLS streams for use as IPTV input in tvheadend, but it can be used with any source that can be 
 handled by the `avconv` utility. Currently it simply remuxes the source stream into MPEG-TS and adds a service name 
