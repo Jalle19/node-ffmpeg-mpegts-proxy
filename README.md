@@ -151,6 +151,26 @@ passed to it or the user it should run as)
 
 The output from the application is logged to `/var/log/node-ffmpeg-mpegts-proxy.log`
 
+## Running the application with Docker
+
+Assuming the absolute path to your `sources.json` file is `/tmp/sources.json` and you want to run the application 
+on port 9128, run the following command:
+
+```bash
+docker run -p 9128:9128 -v /tmp/sources.json:/home/node/node-ffmpeg-mpegts-proxy/sources.json -d jalle19/node-ffmpeg-mpegts-proxy
+```
+
+You can verify that the application is running by running `docker ps`. You can see the output from the application by 
+running `docker logs -f <container>`, where `<container>` is the container ID from the `docker ps` command.
+
+### Building your own version of the container
+
+If you need to do major customizations to the Docker image, you might wanna build it yourself with your changes:
+
+```bash
+docker build -t jalle19/node-ffmpeg-mpegts-proxy .
+```
+
 ## Development environment
 
 Install nodejs and ffmpeg locally, no virtual machines required.
