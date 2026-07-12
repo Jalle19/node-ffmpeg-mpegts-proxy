@@ -13,4 +13,6 @@ EXPOSE 9128
 VOLUME [ "/data" ]
 USER node
 
-CMD ["node", "node-ffmpeg-mpegts-proxy.js", "-p", "9128", "-a", "/usr/local/bin/ffmpeg", "-s", "/data/sources.json", "-v"]
+ENTRYPOINT ["node", "node-ffmpeg-mpegts-proxy.js"]
+
+CMD ["-p", "9128", "-a", "/usr/local/bin/ffmpeg", "-s", "/data/sources.json"]
