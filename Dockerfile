@@ -1,18 +1,18 @@
-FROM node:8
+FROM node:24-trixie
 
-# Enable jessie-backports and install ffmpeg
-RUN echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list && \
-	apt-get -qy update && \
-	apt-get -qy install ffmpeg && \
-	rm -rf /var/lib/apt/lists/*
+COPY --from=mwader/static-ffmpeg:8.1.1 /ffmpeg /usr/local/bin/
 
-# Install the application
-WORKDIR /home/node/node-ffmpeg-mpegts-proxy
+WORKDIR /app
+
 COPY package*.json ./
-RUN npm install --production
-COPY . .
+RUN npm install --omit=dev
+COPY libs ./libs
+COPY node-ffmpeg-mpegts-proxy.js .
 
-# Configure the run environment
 EXPOSE 9128
+VOLUME [ "/data" ]
 USER node
-CMD ["node", "node-ffmpeg-mpegts-proxy.js", "-p", "9128", "-a", "/usr/bin/ffmpeg", "-s", "/home/node/node-ffmpeg-mpegts-proxy/sources.json"]
+
+ENTRYPOINT ["node", "node-ffmpeg-mpegts-proxy.js"]
+
+CMD ["-p", "9128", "-a", "/usr/local/bin/ffmpeg", "-s", "/data/sources.json"]

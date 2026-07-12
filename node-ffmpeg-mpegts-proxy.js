@@ -5,11 +5,11 @@ var yargs = require('yargs');
 var winston = require('winston');
 var http = require("http");
 var child_process = require('child_process');
-var sleep = require('sleep');
 var executable = require('executable');
 var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
+var sleep = require('./libs/sleep');
 var commandExists = require('command-exists');
 
 /*
